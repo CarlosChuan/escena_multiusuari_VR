@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
+/// <summary>
+/// Tipus de distribucions.
+/// </summary>
 public enum SceneType
 {
     Tutorial,
@@ -14,11 +16,19 @@ public enum SceneType
     BehindEnd
 }
 
+/// <summary>
+/// Dades de transformació de la distribució.
+/// </summary>
 public struct SceneTransformData
 {
     public Vector3 position;
     public Quaternion rotation;
 
+    /// <summary>
+    /// Constructor de dades de transformació.
+    /// </summary>
+    /// <param name="pos">Posició de la distribució.</param>
+    /// <param name="rotEuler">Rotació de la distribució en graus.</param>
     public SceneTransformData(Vector3 pos, Vector3 rotEuler)
     {
         position = pos;
@@ -26,8 +36,13 @@ public struct SceneTransformData
     }
 }
 
+/// <summary>
+/// Controlador de la escena.
+/// </summary>
 public class SceneController : MonoBehaviour
 {
+    // Elements de configuració de la escena, com llistat de materials i prefabs o llistat d'elements usats al tutorial.
+    // Tots aquests han de ser introduits desde l'inspector de Unity.
     [Header("Elements Configuration")]
     [SerializeField] private List<Material> materials;
     [SerializeField] private List<GameObject> prefabs;
@@ -41,15 +56,17 @@ public class SceneController : MonoBehaviour
     [Header("Sesion Configuration")]
     [SerializeField] private GameObject solutionBoard;
 
-    // This is the sequence other components can use
+    // Aquesta és la seqüència d'elements que altres components poden utilitzar.
     private List<PuzzleElementData> elementDataList = new List<PuzzleElementData>();
     public IReadOnlyList<PuzzleElementData> ElementsSequence => elementDataList;
 
+    // Esdeveniments interns de Unity.
     public event System.Action OnElementsGenerated;
     public event System.Action OnElementsRemoved;
 
     public int randomSeed;
 
+    // Diccionari amb la posició de la taula amb ordre objectiu segons tipus d'escena.
     private Dictionary<SceneType, SceneTransformData> solutionBoardByType = new()
     {
         { SceneType.Tutorial,  new SceneTransformData(
@@ -70,10 +87,14 @@ public class SceneController : MonoBehaviour
         )},
     };
 
-
+    /// <summary>
+    /// Genera elements aleatoris segons el tipus de distribució i la llavor.
+    /// </summary>
+    /// <param name="sceneType">Tipus de distribució.</param>
+    /// <param name="seed">Llavor.</param>
     public void GenerateRandomElements(SceneType sceneType, int seed)
     {
-        // Move solution board to proper position
+        // Mou la taula de solució a la posició adequada.
         SceneTransformData typeTransform = solutionBoardByType[sceneType];
         this.solutionBoard.transform.localPosition = typeTransform.position;
         this.solutionBoard.transform.localRotation = typeTransform.rotation;
@@ -82,10 +103,11 @@ public class SceneController : MonoBehaviour
 
         elementDataList.Clear();
 
-        // Creaci�n del generador aleatorio determinista con semilla
+        // Creació del generador aleatori determinat amb la semilla.
         System.Random rnd = new System.Random(randomSeed);
         int numberOfElementsInSession = numberOfElements;
-        // Build all possible combinations
+
+        // Construcció de totes les combinacions possibles.
         List<(GameObject prefab, Material material)> combinations = new List<(GameObject, Material)>();
         if (sceneType == SceneType.Tutorial)
         {
@@ -108,14 +130,14 @@ public class SceneController : MonoBehaviour
             }
         }
 
-        // Make sure we don't ask for more than what's possible
+        // Assegura't que no demanis més que el que és possible.
         if (numberOfElementsInSession > combinations.Count)
         {
             Debug.LogWarning("Requested number of elements exceeds available unique prefab-material combinations.");
             numberOfElementsInSession = combinations.Count;
         }
 
-        // Shuffle combinations
+        // Barreges les combinacions.
         Shuffle(combinations, rnd);
 
         for (int i = 0; i < numberOfElementsInSession; i++)
@@ -129,6 +151,7 @@ public class SceneController : MonoBehaviour
                 prefab = combination.prefab
             };
 
+            // Obté el component PuzzleElement del prefab.
             PuzzleElement logic = combination.prefab.GetComponent<PuzzleElement>();
             foreach (var component in logic.componentParts)
             {
@@ -144,16 +167,25 @@ public class SceneController : MonoBehaviour
                 puzzleElementData.componentParts.Add(componentData);
             };
 
-           elementDataList.Add(puzzleElementData);
+            // Afegeix l'element a la llista.
+            elementDataList.Add(puzzleElementData);
             Debug.Log($"Added element {groupName}");
         }
 
+        // Invoca l'esdeveniment de generació d'elements.
         OnElementsGenerated?.Invoke();
 
+        // Inicia el registre d'esdeveniments.
         var e = new TaskStarted(sceneType);
         EventLogger.Instance.Log(e);
     }
 
+    /// <summary>
+    /// Barreges una llista.
+    /// </summary>
+    /// <typeparam name="T">Tipus de la llista.</typeparam>
+    /// <param name="list">Llista a barreger.</param>
+    /// <param name="rnd">Generador aleatori.</param>
     void Shuffle<T>(List<T> list, System.Random rnd)
     {
         for (int i = 0; i < list.Count; i++)
@@ -163,6 +195,9 @@ public class SceneController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Finalitza la escena.
+    /// </summary>
     public void FinishScene()
     {
         Debug.Log("Finishing scene.");
@@ -171,6 +206,11 @@ public class SceneController : MonoBehaviour
         OnElementsRemoved?.Invoke();
     }
 
+    /// <summary>
+    /// Obté un element de la llista segons el nom del grup.
+    /// </summary>
+    /// <param name="groupName">Nom del grup.</param>
+    /// <returns>Element de la llista.</returns>
     public PuzzleElementData GetElementByGroupName(string groupName)
     {
         return elementDataList.FirstOrDefault(e => e.groupName == groupName);

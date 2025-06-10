@@ -1,13 +1,29 @@
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// Mostra el nombre de peces col·locades.
+/// </summary>
 public class SnapCounterDisplay : MonoBehaviour
 {
+    /// <summary>
+    /// Caixa de col·locació.
+    /// </summary>
     public SnapBox snapBox;
+
+    /// <summary>
+    /// Controlador de la escena.
+    /// </summary>
     public SceneController sceneController;
+
+    /// <summary>
+    /// Text de l'element UI.
+    /// </summary>
     public TMP_Text displayText;
 
-
+    /// <summary>
+    /// Quan està habilitat.
+    /// </summary>
     void OnEnable()
     {
         if (snapBox!= null)
@@ -16,6 +32,9 @@ public class SnapCounterDisplay : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Quan està desabilitat.
+    /// </summary>
     void OnDisable()
     {
         if (snapBox != null)
@@ -24,6 +43,9 @@ public class SnapCounterDisplay : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Actualitza el text.
+    /// </summary>
     private void UpdateText()
     {
         if (displayText != null)

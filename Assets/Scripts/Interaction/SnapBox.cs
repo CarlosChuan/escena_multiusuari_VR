@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+/// <summary>
+/// Caixa de col·lisió.
+/// </summary>  
 public class SnapBox : MonoBehaviour
 {
     [SerializeField] public List<Slot> slots;
@@ -8,9 +11,12 @@ public class SnapBox : MonoBehaviour
     [SerializeField] private SceneController sceneController;
     [SerializeField] private GameObject table;
 
+    // Event de canvi de col·lisió.
     public event System.Action OnSnapChange;
 
-
+    /// <summary>
+    /// Quan està habilitat.
+    /// </summary>
     void OnEnable()
     {
         if (sceneController != null)
@@ -20,6 +26,9 @@ public class SnapBox : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Quan està deshabilitat.
+    /// </summary>
     void OnDisable()
     {
         if (sceneController != null)
@@ -29,6 +38,9 @@ public class SnapBox : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Assigna els slots.
+    /// </summary>
     public void AssignSlots()
     {
         Transform thisTransform = table.transform;
@@ -74,6 +86,9 @@ public class SnapBox : MonoBehaviour
         OnSnapChange?.Invoke();
     }
 
+    /// <summary>
+    /// Elimina els slots.
+    /// </summary>
     private void RemoveSlots()
     {
         Debug.Log("Removing slots in SnapBox");
@@ -93,6 +108,12 @@ public class SnapBox : MonoBehaviour
         OnSnapChange?.Invoke();
     }
 
+    /// <summary>
+    /// Intenta col·locar un objecte en un slot.
+    /// </summary>
+    /// <param name="obj">Objecte a col·locar.</param>
+    /// <param name="slotIndex">Índex del slot.</param>
+    /// <returns>True si l'objecte s'ha col·locat, false en cas contrari.</returns>
     public bool TrySnap(GameObject obj, int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= slots.Count)
@@ -169,6 +190,12 @@ public class SnapBox : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Intenta descol·locar un objecte d'un slot.
+    /// </summary>
+    /// <param name="obj">Objecte a descol·locar.</param>
+    /// <param name="slotIndex">Índex del slot.</param>
+    /// <returns>True si l'objecte s'ha descol·locat, false en cas contrari.</returns>
     public bool TryDetach(GameObject obj, int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= slots.Count)
@@ -184,20 +211,20 @@ public class SnapBox : MonoBehaviour
 
         var groupDict = slot.orderGameObjects;
 
-        // Check if this object actually exists in the slot's stack
+        // Comprova si l'objecte existeix en el stack de l'slot.
         if (!groupDict.ContainsKey(puzzleComponent.order))
         {
             Debug.LogWarning($"❌ Cannot detach: object with order {puzzleComponent.order} not found in slot.");
             return false;
         }
 
-        // Remove the object from the stack
+        // Elimina l'objecte del stack.
         groupDict.Remove(puzzleComponent.order);
 
-        // Detach it from hierarchy
+        // Desacopla l'objecte de la jerarquia.
         // obj.transform.SetParent(null);
 
-        // If this was the last element in the group, clear slot info
+        // Si aquest era l'últim element en el grup, neteja les dades de l'slot.
         if (groupDict.Count == 0)
         {
             slot.ClearSlot();
@@ -208,13 +235,18 @@ public class SnapBox : MonoBehaviour
         return true;
     }
 
+    /// <summary>
+    /// Obté el límit de l'objecte.
+    /// </summary>
+    /// <param name="obj">Objecte a comprovar.</param>
+    /// <returns>Límit de l'objecte.</returns>
     private Bounds GetRendererBounds(GameObject obj)
     {
         Renderer rend = obj.GetComponent<Renderer>();
         if (rend != null)
             return rend.bounds;
 
-        // Fallback if object has children
+        // Casos de fallada.
         Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
         if (renderers.Length > 0)
         {

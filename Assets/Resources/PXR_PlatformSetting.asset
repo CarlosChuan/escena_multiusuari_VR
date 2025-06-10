@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: ca2ad463c86516a4ebc45b36727819d0, type: 3}
   m_Name: PXR_PlatformSetting
-  m_EditorClassIdentifier: PICO.Platform:Unity.XR.PXR:PXR_PlatformSetting
+  m_EditorClassIdentifier: 
   entitlementCheckSimulation: 0
   startTimeEntitlementCheck: 0
   appID: 7417049648218718213

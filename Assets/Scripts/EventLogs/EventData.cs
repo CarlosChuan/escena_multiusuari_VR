@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// Dades de l'esdeveniment.
+/// </summary>
 [Serializable]
 public class EventData
 {
@@ -13,6 +16,9 @@ public class EventData
     public string from;
 }
 
+/// <summary>
+/// Inicia una tasca.
+/// </summary>
 public class TaskStarted : EventData
 {
     public TaskStarted(SceneType sceneType)
@@ -23,6 +29,9 @@ public class TaskStarted : EventData
     }
 }
 
+/// <summary>
+/// Finalitza una tasca.
+/// </summary>
 public class TaskFinished : EventData
 {
     public TaskFinished()
@@ -32,6 +41,9 @@ public class TaskFinished : EventData
     }
 }
 
+/// <summary>
+/// Objecte agafat.
+/// </summary>
 public class ObjectPicked : EventData
 {
     public ObjectPicked(string objectName)
@@ -42,6 +54,9 @@ public class ObjectPicked : EventData
     }
 }
 
+/// <summary>
+/// Objecte col·locat.
+/// </summary>
 public class ObjectPlaced : EventData
 {
     public ObjectPlaced(string objectName, int slotTarget)
@@ -52,6 +67,9 @@ public class ObjectPlaced : EventData
     }
 }
 
+/// <summary>
+/// Error de col·locació.
+/// </summary>
 public class ErrorPlacement: EventData
 {
     public ErrorPlacement(int slotTarget)

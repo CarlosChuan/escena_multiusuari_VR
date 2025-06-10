@@ -6,16 +6,28 @@ using Photon.Realtime;
 using ExitGames.Client.Photon;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 
+/// <summary>
+/// Col路loca els elements en la taula.
+/// </summary>
 public class TablePlacer : MonoBehaviour
 {
     [SerializeField] private SceneController sceneController;
     [SerializeField] private Transform table;
     [SerializeField] private XRInteractionManager interactionManager;
 
+    /// <summary>
+    /// Llista de components de les peces.
+    /// </summary>
     private List<GameObject> puzzleComponents;
 
+    /// <summary>
+    /// Llista de dades de les peces.
+    /// </summary>
     public List<PuzzleComponentData> publicElementsData;
 
+    /// <summary>
+    /// Quan es fa start.
+    /// </summary>
     private void OnStart()
     {
         if (interactionManager == null)
@@ -25,6 +37,9 @@ public class TablePlacer : MonoBehaviour
             this.table = this.gameObject.transform;
     }
 
+    /// <summary>
+    /// Quan est脿 habilitat.
+    /// </summary>
     void OnEnable()
     {
         if (sceneController != null)
@@ -34,6 +49,9 @@ public class TablePlacer : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Quan est脿 desabilitat.
+    /// </summary>
     void OnDisable()
     {
         if (sceneController != null)
@@ -43,6 +61,9 @@ public class TablePlacer : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Quan es col路loca els elements en la taula.
+    /// </summary>
     void PlaceElementsOnTable()
     {
         puzzleComponents = new();
@@ -59,7 +80,7 @@ public class TablePlacer : MonoBehaviour
         }
 
 
-        // Creaci髇 del generador aleatorio determinista con semilla
+        // Creaci锟絥 del generador aleatorio determinista con semilla
         System.Random rnd = new System.Random(sceneController.randomSeed);
 
         // Step 2: Shuffle the parts randomly
@@ -133,6 +154,9 @@ public class TablePlacer : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Quan es treuen els elements de la taula.
+    /// </summary>
     void RemoveElementsFromTable()
     {
         if (puzzleComponents != null)
@@ -144,7 +168,12 @@ public class TablePlacer : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Barreges una llista.
+    /// </summary>
+    /// <typeparam name="T">Tipus de la llista.</typeparam>
+    /// <param name="list">Llista a barreger.</param>
+    /// <param name="rnd">Generador aleatori.</param>
     void Shuffle<T>(List<T> list, System.Random rnd)
     {
         for (int i = 0; i < list.Count; i++)
@@ -154,6 +183,13 @@ public class TablePlacer : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Crea un objecte remot per tal de sincronitzar-ho.
+    /// </summary>
+    /// <param name="position">Posici贸.</param>
+    /// <param name="rotation">Rotaci贸.</param>
+    /// <param name="ViewID">ID de la vista.</param>
+    /// <param name="indexInElements">脥ndex de l'element.</param>
     public void CreateRemoteObject (Vector3 position, Quaternion rotation, int ViewID, int indexInElements)
     {
         Debug.Log($"Creating remote object {indexInElements} in {position} with ID {ViewID}");
